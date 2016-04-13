@@ -16,6 +16,7 @@ public class Transformer {
 
     /**
      * Converts an SAT to 3-SAT.
+     *
      * @param inputSAT The SAT to be changed.
      * @return The 3-SAT
      */
@@ -108,6 +109,7 @@ public class Transformer {
 
     /**
      * Convert SAT to 0-1 ILP.
+     *
      * @param inputSAT The SAT to convert.
      * @return The 0-1 ILP object.
      */
@@ -121,7 +123,7 @@ public class Transformer {
             List<Term> terms = new ArrayList<>();
 
             // Loop through all literals.=
-            for (Iterator<Literal> it = clause.getLiterals(); it.hasNext();) {
+            for (Iterator<Literal> it = clause.getLiterals(); it.hasNext(); ) {
                 Literal literal = it.next();
 
                 int coeff = literal.getIsPositive() ? 1 : -1;
@@ -135,7 +137,7 @@ public class Transformer {
 
             int bound = -numOfNegativeTerms + 1;
 
-            Constraint newConstraint = new Constraint(terms, Constraint.Op.GE ,bound);
+            Constraint newConstraint = new Constraint(terms, Constraint.Op.GE, bound);
             outputILP.addConstraint(newConstraint);
         }
 
@@ -144,6 +146,7 @@ public class Transformer {
 
     /**
      * Convert an ILP to an SAT instance.
+     *
      * @param inputILP The 0-1 ILP serving as input.
      * @return The 3-SAT.
      */

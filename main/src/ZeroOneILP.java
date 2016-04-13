@@ -75,4 +75,15 @@ public class ZeroOneILP {
                 return null;
         } while (true);
     }
+
+    @Override
+    public String toString() {
+        String output = "0-1 ILP constraints:\n";
+
+        for (Constraint constraint : this.constraints) {
+            output += constraint + "\n";
+        }
+
+        return output;
+    }
 }
