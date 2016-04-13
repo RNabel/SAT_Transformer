@@ -9,6 +9,10 @@ public class ILPVariable {
         this.v = v;
     }
 
+    public int getV() {
+        return v;
+    }
+
     public String toString () {
         return "x" + Integer.toString(this.v);
     }

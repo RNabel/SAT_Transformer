@@ -6,23 +6,23 @@ import java.util.LinkedList;
 public class SATinstance {
     LinkedList<Clause> clauses;
 
-    public SATinstance () {
+    public SATinstance() {
         clauses = new LinkedList<Clause>();
     }
 
-    public int getLength () {
+    public int getLength() {
         return clauses.size();
     }
 
-    public void addClause (Clause c) {
-        clauses.add (c);
+    public void addClause(Clause c) {
+        clauses.add(c);
     }
 
-    public ListIterator<Clause> getClauses () {
+    public ListIterator<Clause> getClauses() {
         return clauses.listIterator();
     }
 
-    public String toString () {
+    public String toString() {
         StringBuilder sb = new StringBuilder("{");
         boolean hasprev = false;
         for (Clause c : clauses) {
@@ -30,66 +30,66 @@ public class SATinstance {
                 sb.append(", ");
             }
             hasprev = true;
-            sb.append (c);
+            sb.append(c);
         }
         return sb.append("}").toString();
     }
 
-    private enum ParseState {INIT, BETWEEN};
- 
+    private enum ParseState {INIT, BETWEEN}
+
     /**
      * Parse SAT instances, which must look like
      * <pre>{ <clause1>, <clause2>, ... } </pre>
      *
-     * @return parsed instance, or null on syntax error 
+     * @return parsed instance, or null on syntax error
      */
-    public static SATinstance parseSATinstance (PushbackReader pr) {
+    public static SATinstance parseSATinstance(PushbackReader pr) {
         try {
-            SATinstance si = new SATinstance ();
+            SATinstance si = new SATinstance();
             int ch;
             ParseState ps = ParseState.INIT;
             while ((ch = pr.read()) != -1) {
-                if (Character.isWhitespace (ch))
+                if (Character.isWhitespace(ch))
                     continue;
                 switch (ps) {
-                case INIT: 
-                    if (ch != '{') {
-                        System.err.println ("Syntax error, expecting {");
-                        return null;
-                    }
-                    ps = ParseState.BETWEEN;
-                    break;
-                case BETWEEN:
-                    if (ch == ',') 
-                        continue;
-                    if (ch == '}')
-                        return si;
-                    pr.unread (ch);
-                    Clause c = Clause.parseClause (pr);
-                    if (c != null) {
-                        si.addClause (c);
-                    }
-                    break;
+                    case INIT:
+                        if (ch != '{') {
+                            System.err.println("Syntax error, expecting {");
+                            return null;
+                        }
+                        ps = ParseState.BETWEEN;
+                        break;
+                    case BETWEEN:
+                        if (ch == ',')
+                            continue;
+                        if (ch == '}')
+                            return si;
+                        pr.unread(ch);
+                        Clause c = Clause.parseClause(pr);
+                        if (c != null) {
+                            si.addClause(c);
+                        }
+                        break;
                 }
             }
         } catch (IOException e) {
-            System.err.println ("Could not read input");
+            System.err.println("Could not read input");
             return null;
         }
-        System.err.println ("Malformed input SAT instance");
+        System.err.println("Malformed input SAT instance");
         return null;
     }
 
     /**
      * Utility function to read from standard input
      */
-    public static SATinstance readSATinstance () {
-        PushbackReader pr = 
-            new PushbackReader (new InputStreamReader(System.in));
-        return parseSATinstance (pr);
+    public static SATinstance readSATinstance() {
+        PushbackReader pr =
+                new PushbackReader(new InputStreamReader(System.in));
+        return parseSATinstance(pr);
     }
 
-    public static void main (String [] args) {
+    public static void main(String[] args) {
         InputStream stdin = System.in;
 
         // If test argument was provided, set System.in to the string and parse SAT instance accordingly.
@@ -113,5 +113,15 @@ public class SATinstance {
         System.out.println("Convert to ILP.");
         ZeroOneILP zoILP = Transformer.satToILP(si2);
         System.out.println("0-1 ILP: " + zoILP);
+
+        // Solve the 0-1 ILP.
+        System.out.println("Solving the ILP");
+        ILPSolution solution = zoILP.findSoln();
+        System.out.println("The solution is: " + solution);
+
+        // Convert back to 3-SAT.
+        System.out.println("Convert back to 3-SAT");
+        SATinstance backTo3SAT = Transformer.ilpToSat(zoILP);
+        System.out.println("3-SAT: " + backTo3SAT);
     }
 }

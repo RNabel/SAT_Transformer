@@ -145,12 +145,23 @@ public class Transformer {
     /**
      * Convert an ILP to an SAT instance.
      * @param inputILP The 0-1 ILP serving as input.
-     * @return
+     * @return The 3-SAT.
      */
     public static SATinstance ilpToSat(ZeroOneILP inputILP) {
         SATinstance satOutput = new SATinstance();
 
-        // For eacj constraint.
+        // For each constraint.
+        for (Constraint constraint : inputILP.getConstraints()) {
+            Clause clause = new Clause();
+
+            // For each term.
+            for (Term term : constraint.getTerms()) {
+                Literal literal = new Literal(term.getVariable().getV() * term.getCoefficient());
+                clause.addLiteral(literal);
+            }
+
+            satOutput.addClause(clause);
+        }
 
         return satOutput;
     }
