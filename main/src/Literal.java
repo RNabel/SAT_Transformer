@@ -1,6 +1,6 @@
 public class Literal {
     private BoolVar v;
-    private boolean sign;
+    private boolean isPositive;
 
     public Literal (int l) {
         if (l == 0) {
@@ -8,10 +8,10 @@ public class Literal {
         }
         if (l > 0) { 
             v = new BoolVar(l); 
-            sign = true;
+            isPositive = true;
         } else { 
             v = new BoolVar(-l);
-            sign = false;
+            isPositive = false;
         }
     }
 
@@ -19,12 +19,12 @@ public class Literal {
         return v;
     }
 
-    public boolean getSign () {
-        return sign;
+    public boolean getIsPositive() {
+        return isPositive;
     }
 
     public String toString () {
-        String s = sign ? "+" : "-";
+        String s = isPositive ? "+" : "-";
         String vs = v.toString();
         return s + vs;
     }

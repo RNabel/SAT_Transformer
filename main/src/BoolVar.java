@@ -9,6 +9,10 @@ public class BoolVar {
         this.v = v;
     }
 
+    public int getV() {
+        return v;
+    }
+
     public String toString () {
         return Integer.toString(this.v);
     }

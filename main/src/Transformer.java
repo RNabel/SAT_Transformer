@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Class transforming NPC problems between each other.
@@ -15,7 +14,11 @@ public class Transformer {
         public int currentOffset;
     }
 
-
+    /**
+     * Converts an SAT to 3-SAT.
+     * @param inputSAT The SAT to be changed.
+     * @return The 3-SAT
+     */
     public static SATinstance satToThreeSat(SATinstance inputSAT) {
         SATinstance outputSAT = new SATinstance();
 
@@ -24,7 +27,7 @@ public class Transformer {
         for (Clause clause : inputSAT.clauses)
             for (Iterator<Literal> it = clause.getLiterals(); it.hasNext(); ) {
                 Literal currentLiteral = it.next();
-                int currentIndex = Integer.parseInt(currentLiteral.getVar().toString());
+                int currentIndex = currentLiteral.getVar().getV();
                 maxIndex = (maxIndex > currentIndex) ? maxIndex : currentIndex;
             }
 
@@ -101,5 +104,54 @@ public class Transformer {
         offsetTracker.currentOffset = dummyOffset;
 
         return clauses;
+    }
+
+    /**
+     * Convert SAT to 0-1 ILP.
+     * @param inputSAT The SAT to convert.
+     * @return The 0-1 ILP object.
+     */
+    public static ZeroOneILP satToILP(SATinstance inputSAT) {
+        ZeroOneILP outputILP = new ZeroOneILP();
+
+        // Loop through each clause.
+        for (Clause clause : inputSAT.clauses) {
+            int numOfNegativeTerms = 0;
+
+            List<Term> terms = new ArrayList<>();
+
+            // Loop through all literals.=
+            for (Iterator<Literal> it = clause.getLiterals(); it.hasNext();) {
+                Literal literal = it.next();
+
+                int coeff = literal.getIsPositive() ? 1 : -1;
+                numOfNegativeTerms += literal.getIsPositive() ? 0 : 1;
+
+                ILPVariable variable = new ILPVariable(literal.getVar().getV());
+
+                Term newTerm = new Term(coeff, variable);
+                terms.add(newTerm);
+            }
+
+            int bound = -numOfNegativeTerms + 1;
+
+            Constraint newConstraint = new Constraint(terms, Constraint.Op.GE ,bound);
+            outputILP.addConstraint(newConstraint);
+        }
+
+        return outputILP;
+    }
+
+    /**
+     * Convert an ILP to an SAT instance.
+     * @param inputILP The 0-1 ILP serving as input.
+     * @return
+     */
+    public static SATinstance ilpToSat(ZeroOneILP inputILP) {
+        SATinstance satOutput = new SATinstance();
+
+        // For eacj constraint.
+
+        return satOutput;
     }
 }

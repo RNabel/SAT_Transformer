@@ -8,14 +8,14 @@ public class ILPSolution {
     private HashMap<ILPVariable, Integer> soln;
 
     public ILPSolution () {
-        soln = new HashMap<ILPVariable, Integer> ();
+        soln = new HashMap<>();
     }
 
     /**
      * add/replace mapping for a ILP variable 
      */
     public void add (ILPVariable zv, int i) {
-        soln.put (zv, new Integer(i));
+        soln.put (zv, i);
     }
 
     /**
@@ -29,7 +29,7 @@ public class ILPSolution {
      * retrieve mapping for a ILP variable 
      */
     public int getValue (ILPVariable zv) {
-        return soln.get(zv).intValue();
+        return soln.get(zv);
     }
 
     public String toString () {

@@ -104,8 +104,14 @@ public class SATinstance {
         // Reset System.in
         System.setIn(stdin);
 
+        // Convert to 3-SAT.
         System.out.println("Finished SAT parsing, now converting.");
         SATinstance si2 = Transformer.satToThreeSat(si);
         System.out.println("Converted: " + si2);
+
+        // Convert to ILP.
+        System.out.println("Convert to ILP.");
+        ZeroOneILP zoILP = Transformer.satToILP(si2);
+        System.out.println("0-1 ILP: " + zoILP);
     }
 }
