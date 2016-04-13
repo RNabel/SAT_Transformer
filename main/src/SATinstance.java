@@ -1,6 +1,4 @@
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.PushbackReader;
+import java.io.*;
 import java.lang.Character;
 import java.util.ListIterator;
 import java.util.LinkedList;
@@ -92,9 +90,22 @@ public class SATinstance {
     }
 
     public static void main (String [] args) {
-        SATinstance si = readSATinstance();
-        System.out.println ("Read: " + si);
+        InputStream stdin = System.in;
 
-        Transformer.satToThreeSat(si);
+        // If test argument was provided, set System.in to the string and parse SAT instance accordingly.
+        if (args.length > 0) {
+            byte[] bytes = (args[0] + "\n").getBytes();
+            System.setIn(new ByteArrayInputStream(bytes));
+        }
+
+        SATinstance si = readSATinstance();
+        System.out.println("Read: " + si);
+
+        // Reset System.in
+        System.setIn(stdin);
+
+        System.out.println("Finished SAT parsing, now converting.");
+        SATinstance si2 = Transformer.satToThreeSat(si);
+        System.out.println("Converted: " + si2);
     }
 }
