@@ -1,5 +1,7 @@
+import javax.swing.tree.TreeNode;
 import java.io.*;
 import java.lang.Character;
+import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.LinkedList;
 
@@ -20,6 +22,34 @@ public class SATinstance {
 
     public ListIterator<Clause> getClauses() {
         return clauses.listIterator();
+    }
+
+    public int getNumberOfLiterals() {
+        int maxIndex = 0;
+        for (Clause clause : this.clauses)
+            for (Iterator<Literal> it = clause.getLiterals(); it.hasNext(); ) {
+                Literal currentLiteral = it.next();
+                int currentIndex = currentLiteral.getVar().getV();
+                maxIndex = (maxIndex > currentIndex) ? maxIndex : currentIndex;
+            }
+        return maxIndex;
+    }
+
+    public SATSolution findSolution() {
+        // Convert to 3-SAT.
+        SATinstance threeSAT = Transformer.satToThreeSat(this);
+
+        // Convert to ILP.
+        ZeroOneILP zeroOneILP = Transformer.satToILP(threeSAT);
+
+        // Solve ILP.
+        ILPSolution solution = zeroOneILP.findSoln();
+
+        // Convert the solution to SATSolution.
+        int numOfLiterals = this.getNumberOfLiterals();
+        SATSolution satSolution = new SATSolution(solution, numOfLiterals);
+
+        return satSolution;
     }
 
     public String toString() {
@@ -118,6 +148,11 @@ public class SATinstance {
         System.out.println("Solving the ILP");
         ILPSolution solution = zoILP.findSoln();
         System.out.println("The solution is: " + solution);
+
+        // Solve original SAT.
+        System.out.println("Solving in one go");
+        SATSolution satSolution = si.findSolution();
+        System.out.println(satSolution);
 
         // Convert back to 3-SAT.
         System.out.println("Convert back to 3-SAT");

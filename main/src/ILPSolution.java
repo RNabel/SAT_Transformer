@@ -32,6 +32,10 @@ public class ILPSolution {
         return soln.get(zv);
     }
 
+    public HashMap<ILPVariable, Integer> getSoln() {
+        return soln;
+    }
+
     public String toString () {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<ILPVariable, Integer> vi : soln.entrySet()) {
